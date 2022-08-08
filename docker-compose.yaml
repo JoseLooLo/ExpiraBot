@@ -9,3 +9,4 @@ services:
       - .:/usr/src/app
     environment:
       TELEGRAM_BOT_KEY: ${TELEGRAM_BOT_KEY}
+      DATABASE_URL: ${DATABASE_URL}

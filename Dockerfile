@@ -9,5 +9,6 @@ COPY . .
 # RUN go build -v -o /usr/local/bin/app ./...
 
 ENV TELEGRAM_BOT_KEY ${TELEGRAM_BOT_KEY}
+ENV DATABASE_URL ${DATABASE_URL}
 
 CMD ["go", "run", "main.go"]

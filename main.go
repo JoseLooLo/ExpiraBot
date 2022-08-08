@@ -4,34 +4,22 @@ package main
 import (
 	"log"
 	"os"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	mongodb "github.com/JoseLooLo/ExpiraBot/database/mongodb"
+	bot "github.com/JoseLooLo/ExpiraBot/bot"
 )
 
 func main() {
-	log.Printf("%s=%s\n", "TELEGRAM_BOT_KEY", os.Getenv("TELEGRAM_BOT_KEY"))
+	log.Printf("Starting ExpiraBot...")
 
-	bot, err := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_BOT_KEY"))
-	if err != nil {
-		log.Panic(err)
-	}
+	telegram_bot_key := os.Getenv("TELEGRAM_BOT_KEY")
+	database_url := os.Getenv("DATABASE_URL")
 
-	bot.Debug = false
+	log.Printf("%s=%s\n", "TELEGRAM_BOT_KEY", telegram_bot_key)
+	log.Printf("%s=%s\n", "DATABASE_URL", database_url)
 
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+	database := &mongodb.Mongodb{}
+	closedb := database.Start(database_url)
+	defer closedb()
 
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
-
-	updates := bot.GetUpdatesChan(u)
-
-	for update := range updates {
-		if update.Message != nil {
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-			msg.ReplyToMessageID = update.Message.MessageID
-
-			bot.Send(msg)
-		}
-	}
+	bot.Start(telegram_bot_key, database, false)
 }
