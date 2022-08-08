@@ -3,14 +3,30 @@ package bot
 
 import (
 	"log"
+	security "github.com/JoseLooLo/ExpiraBot/security"
 	expiraBot "github.com/JoseLooLo/ExpiraBot/database"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type requisiton struct {
-	bot *tgbotapi.BotAPI
-	update tgbotapi.Update
-	database expiraBot.Database
+type Event struct {
+	event string
+}
+
+func (e *Event) Next(r security.Requisition) {
+	switch e.event {
+		case "start":
+			go e.Start(r)
+		case "insert":
+			go e.Insert(r)
+		case "update":
+			go e.Update(r)
+		case "books":
+			go e.Books(r)
+		case "help":
+			go e.Help(r)
+		default:
+			go e.ErrorCommand(r)
+	}
 }
 
 func Start(key string, database expiraBot.Database, debug bool) {
@@ -30,21 +46,11 @@ func Start(key string, database expiraBot.Database, debug bool) {
 
 	for update := range updates {
 		if update.Message != nil && update.Message.IsCommand() {
-			new_requisiton := requisiton{bot, update, database}
-			switch update.Message.Command() {
-				case "start":
-					go new_requisiton.Start()
-				case "insert":
-					go new_requisiton.Insert()
-				case "update":
-					go new_requisiton.Update()
-				case "books":
-					go new_requisiton.Books()
-				case "help":
-					go new_requisiton.Help()
-				default:
-					go new_requisiton.ErrorCommand()
-			}
+			requisition := security.Requisition{bot, update, database}
+			event := &Event{update.Message.Command()}
+			flood := &security.FloodChain{event}
+			chain := &security.SecurityChain{requisition, flood}
+			go chain.Execute()
 		}
 	}
 }

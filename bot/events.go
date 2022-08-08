@@ -4,30 +4,33 @@ import (
 	"log"
 	expiraBot "github.com/JoseLooLo/ExpiraBot/database"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	security "github.com/JoseLooLo/ExpiraBot/security"
 )
 
-func (r requisiton) Start() {
-	user := expiraBot.User{r.update.Message.Chat.ID, false}
-	r.database.InsertUser(user)
+
+
+func (e Event) Start(r security.Requisition) {
+	user := expiraBot.User{r.Update.Message.Chat.ID, false}
+	r.Database.InsertUser(user)
 
 	//TODO
-	msg := tgbotapi.NewMessage(r.update.Message.Chat.ID, "")
-	log.Printf(r.update.Message.Text)
-	msg.Text = r.update.Message.Text
-	r.bot.Send(msg)
+	msg := tgbotapi.NewMessage(r.Update.Message.Chat.ID, "")
+	log.Printf(r.Update.Message.Text)
+	msg.Text = r.Update.Message.Text
+	r.Bot.Send(msg)
 }
 
-func (r requisiton) Insert() {
+func (e Event) Insert(r security.Requisition) {
 }
 
-func (r requisiton) Update() {
+func (e Event) Update(r security.Requisition) {
 }
 
-func (r requisiton) Books() {
+func (e Event) Books(r security.Requisition) {
 }
 
-func (r requisiton) Help() {
+func (e Event) Help(r security.Requisition) {
 }
 
-func (r requisiton) ErrorCommand() {
+func (e Event) ErrorCommand(r security.Requisition) {
 }
