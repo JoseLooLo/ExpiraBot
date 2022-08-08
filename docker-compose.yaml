@@ -1,0 +1,11 @@
+version: '3.3'
+
+services:
+  expirabot:
+    build: .
+    ports:
+      - '8443:8443'
+    volumes:
+      - .:/usr/src/app
+    environment:
+      TELEGRAM_BOT_KEY: ${TELEGRAM_BOT_KEY}
