@@ -9,11 +9,12 @@ type User struct {
 type Books struct {
 	Userid int64
 	Book string
+	Date string
 }
 
 type Database interface {
 	InsertUser(user User) bool
 	// Delete() bool
-	// Update() bool
+	Update([]Books) bool
 	Start(url string) func()
 }

@@ -6,27 +6,27 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type Requisition struct {
+type Request struct {
 	Bot *tgbotapi.BotAPI
 	Update tgbotapi.Update
 	Database expiraBot.Database
 }
 
 type Security interface {
-	Next(r Requisition)
+	Next(r Request)
 }
 
 type SecurityChain struct {
-	Requisition Requisition
+	Request Request
 	NextChain Security
 }
 
 func (s *SecurityChain) Execute() {
 	log.Println("Security Chain")
-	s.Next(s.Requisition)
+	s.Next(s.Request)
 }
 
-func (s *SecurityChain) Next(r Requisition) {
+func (s *SecurityChain) Next(r Request) {
 	s.NextChain.Next(r)
 }
 

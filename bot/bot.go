@@ -12,7 +12,7 @@ type Event struct {
 	event string
 }
 
-func (e *Event) Next(r security.Requisition) {
+func (e *Event) Next(r security.Request) {
 	switch e.event {
 		case "start":
 			go e.Start(r)
@@ -46,10 +46,10 @@ func Start(key string, database expiraBot.Database, debug bool) {
 
 	for update := range updates {
 		if update.Message != nil && update.Message.IsCommand() {
-			requisition := security.Requisition{bot, update, database}
-			event := &Event{update.Message.Command()}
-			flood := &security.FloodChain{event}
-			chain := &security.SecurityChain{requisition, flood}
+			request := security.Request{Bot: bot, Update: update, Database: database}
+			event := &Event{event: update.Message.Command()}
+			flood := &security.FloodChain{NextChain: event}
+			chain := &security.SecurityChain{Request: request, NextChain: flood}
 			go chain.Execute()
 		}
 	}

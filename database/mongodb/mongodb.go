@@ -35,16 +35,34 @@ func (db *Mongodb) Start(url string) func() {
 	}
 }
 
+//Update the books using the crawler on the bu website
+//Return true if the operations was successful, false otherwise
+func (db Mongodb) Update(books []expiraBot.Books) bool {
+	if (len(books) == 0) {
+		return true
+	}
+	user := expiraBot.User{Id: books[0].Userid, Block: false}
+	if db.userExist(user) {
+		for _, value := range books {
+			log.Println(value)
+			_, err := db.books.InsertOne(context.TODO(), value)
+			if err != nil {
+				log.Println(err.Error())
+				return false
+			}
+		}
+	}
+	return true
+}
+
 //Insert a new user in the mongo database
 //Return true if the operations was successful, false otherwise
 func (db Mongodb) InsertUser(user expiraBot.User) bool {
 	if !db.userExist(user) {
 		_, err := db.user.InsertOne(context.TODO(), user)
 		if err != nil {
-			log.Println("[%s] - Error to insert the user.", user.Id)
 			return false
 		}
-		log.Println("[%s] - New user inserted.", user.Id)
 	}
 	return true
 }
@@ -52,7 +70,7 @@ func (db Mongodb) InsertUser(user expiraBot.User) bool {
 //Check if a user already exists in the mongo database
 //Return true if exists, false otherwise
 func (db Mongodb) userExist(user expiraBot.User) bool {
-	filter := bson.D{{"id", user.Id}}
+	filter := bson.D{{Key: "id", Value: user.Id}}
 	var res expiraBot.User
     err := db.user.FindOne(context.TODO(), filter).Decode(&res)
 	return err != mongo.ErrNoDocuments
