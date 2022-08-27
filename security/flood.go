@@ -1,14 +1,14 @@
 package security
 
 import (
-	"log"
 )
 
 type FloodChain struct {
 	NextChain Security
 }
 
+//Check if the user is flooding commands
 func (f *FloodChain) Next(r Request) {
-	log.Println("FloodChain")
+	//@TODO
 	f.NextChain.Next(r)
 }

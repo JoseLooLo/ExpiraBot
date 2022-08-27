@@ -21,12 +21,23 @@ type SecurityChain struct {
 	NextChain Security
 }
 
+//Just call the Next method of the securityChain
 func (s *SecurityChain) Execute() {
-	log.Println("Security Chain")
 	s.Next(s.Request)
 }
 
+//Check if the user is blocked
+//If is not blocked continue, otherwise just finish the request
 func (s *SecurityChain) Next(r Request) {
+	user := r.Database.GetUserInfoById(r.Update.Message.Chat.ID)
+	if (user.Id != r.Update.Message.Chat.ID) {
+		log.Printf("[Security][SecurityChain][Next] - User %d not found", r.Update.Message.Chat.ID)
+		return
+	}
+	if (user.Block) {
+		log.Printf("[Security][SecurityChain][Next] - User %d is blocked", r.Update.Message.Chat.ID)
+		return
+	}
 	s.NextChain.Next(r)
 }
 

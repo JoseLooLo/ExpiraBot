@@ -9,13 +9,13 @@ import (
 )
 
 func main() {
-	log.Printf("Starting ExpiraBot...")
+	log.Printf("[Info][Main] - Starting ExpiraBot...")
 
 	telegram_bot_key := os.Getenv("TELEGRAM_BOT_KEY")
 	database_url := os.Getenv("DATABASE_URL")
 
-	log.Printf("%s=%s\n", "TELEGRAM_BOT_KEY", telegram_bot_key)
-	log.Printf("%s=%s\n", "DATABASE_URL", database_url)
+	log.Printf("[Info][Main] - %s=%s\n", "TELEGRAM_BOT_KEY", telegram_bot_key)
+	log.Printf("[Info][Main] - %s=%s\n", "DATABASE_URL", database_url)
 
 	database := &mongodb.Mongodb{}
 	closedb := database.Start(database_url)

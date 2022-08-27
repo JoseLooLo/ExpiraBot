@@ -14,7 +14,11 @@ type Books struct {
 
 type Database interface {
 	InsertUser(user User) bool
-	// Delete() bool
+	InsertBook(Books) bool
+	DeleteBook(Books) bool
+	DeleteAll(user User) bool
+	GetBooks(user User) []Books
+	GetUserInfoById(userId int64) User
 	Update([]Books) bool
 	Start(url string) func()
 }

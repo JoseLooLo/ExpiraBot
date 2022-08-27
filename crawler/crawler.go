@@ -8,6 +8,10 @@ import (
     "net/http"
     "io"
     "github.com/PuerkitoBio/goquery"
+
+    "fmt"
+	"golang.org/x/text/encoding/charmap"
+    "golang.org/x/text/encoding"
     expiraBot "github.com/JoseLooLo/ExpiraBot/database"
 )
 
@@ -90,8 +94,9 @@ func htmlParser(responseBody io.ReadCloser) ([]expiraBot.Books, error) {
         date := s.Next().Text()
         if (title != "") {
             //Just to make sure we have a title
+            title = encodeUTF8(title)
             log.Printf("[Info][Crawler] - Found book: %s - %s ", title, date)
-            temp_book := expiraBot.Books{-1, title, date}
+            temp_book := expiraBot.Books{Userid: -1, Book: title, Date: date}
             books = append(books, temp_book)
         }
 	})
@@ -107,4 +112,17 @@ func getCookie(url string) (string, error) {
         return "", errors.New("[Error][Crawler][getCookie] - Request Error")
     }
     return "PHPSESSID=" + temp_cookie_request.Cookies()[0].Value, nil
+}
+
+//Convert charset=iso-8859-1 to UTF-8
+//The bu return to us a charset 8859-1 so we'll convert it to utf-8 before continue
+//@TODO For now this just remove the unsupported characters, make it convert correctly to utf-8
+func encodeUTF8(title string) string {
+	transformer := encoding.ReplaceUnsupported(charmap.ISO8859_10.NewEncoder())
+	src := make([]byte, 0, 1024)
+    dst := make([]byte, 1024)
+    src = append(src, title...)
+    transformer.Transform(dst, src, false)
+    fmt.Println(string(dst))
+    return string(dst)
 }

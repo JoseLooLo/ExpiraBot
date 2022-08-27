@@ -2,6 +2,7 @@ package bot
 
 import (
 	"strings"
+	"strconv"
 	security "github.com/JoseLooLo/ExpiraBot/security"
 	expiraBot "github.com/JoseLooLo/ExpiraBot/database"
 )
@@ -17,7 +18,12 @@ func GetArgs(r security.Request) []string {
 //Receive a login in a string format
 //Return true if the format is correct, false otherwise
 func ValidateLogin(login string) bool {
-	//@TODO
+	//@TODO Is there a standard format for login?
+	login = strings.TrimSpace(login)
+	_, err := strconv.Atoi(login)
+	if (err != nil) {
+		return false
+	}
 	return true
 }
 
@@ -25,8 +31,12 @@ func ValidateLogin(login string) bool {
 //Receive a password in a string format
 //Return true if the format is correct, false otherwise
 func ValidatePassword(password string) bool {
-	//@TODO
-	return true
+	password = strings.TrimSpace(password)
+	_, err := strconv.Atoi(password)
+	if (err != nil) {
+		return false
+	}
+	return len(password) >= 4 && len(password) <= 6
 }
 
 //The books slice received from crawler don't have the user id
