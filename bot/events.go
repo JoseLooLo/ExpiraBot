@@ -70,11 +70,6 @@ func (e Event) Books(r security.Request) {
 	log.Printf("[Info][Bot][Books] - User %d", r.Update.Message.Chat.ID)
 	user := expiraBot.User{Id: r.Update.Message.Chat.ID}
 	books := r.Database.GetBooks(user)
-	if (books == nil) {
-		log.Printf("[Error][Bot][Books] - Error getting the books")
-		return
-	}
-
 	e.SendBooksMessage(r, books)
 }
 
